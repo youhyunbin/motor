@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class ALLMOTOR{
+class Allmotor{
 private:
   ros::NodeHandle nh;
   //퍼블리셔
@@ -17,9 +17,9 @@ private:
   std_msgs::Int16 fin;
 
 public:
-  ALLMOTOR(){
-    pub = nh.advertise<std_msgs::Int16>("/fin2", 1);
-    sub = nh.subscribe("/motor", 5, &ALLMOTOR::msgCallback,this);
+  Allmotor(){
+    pub = nh.advertise<std_msgs::Int16>("/motor_arrival", 1);
+    sub = nh.subscribe("/motor", 1, &Allmotor::msgCallback,this);
   }
 
   void msgCallback(const std_msgs::Int16::ConstPtr& msg){
@@ -27,33 +27,37 @@ public:
       case 101:
         ROS_INFO("First floor is activating");
         forward1(10);
-        fin.data = 3;
-        pub.publish(fin);
         break;
 
       case 102:
         ROS_INFO("Second floor is activating");
         forward2(48);
-        fin.data = 3;
-        pub.publish(fin);
         break;
 
       case 103:
         ROS_INFO("Third floor is activating");
         forward3(48);
-        fin.data = 3;
-        pub.publish(fin);
         break;
     }
+    fin.data = 3;
+    pub.publish(fin);
   }
 };
 
-int main(int argc, char **argv){
-  ros::init(argc, argv, "allmotor"); // node name
-  ros::NodeHandle nh; // NodeHandle reset
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "allmotor");
+
+  //Initiate ROS
+  ros::NodeHandle nh;
   ROS_INFO("All MOTORS ON!");
+
   wiringPiSetupGpio();
-  ALLMOTOR allmotor;
+
+  //Create an object of class allmotor
+  Allmotor allmotor;
+
   ros::spin();
+
   return 0;
 }
